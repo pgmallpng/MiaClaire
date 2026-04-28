@@ -6,6 +6,45 @@
     <title>PG Earn – Daily Commission | Online Jobs</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💰%3C/text%3E%3C/svg%3E">
     <style>
+        /* Light mode (default) */
+        :root {
+            --bg-body: #f2f6fa;
+            --bg-card: white;
+            --text-primary: #1f2f3e;
+            --text-secondary: #2c5370;
+            --text-muted: #5c7e97;
+            --border-light: #e2edf2;
+            --header-bg: white;
+            --header-border: #eef3f8;
+            --badge-bg: #eaf2f9;
+            --badge-color: #1e6b49;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05);
+            --card-border: #e2edf2;
+            --detail-bg: white;
+            --contact-bg: #eef2f9;
+            --footer-color: #87a1bb;
+            --divider: #e2edf2;
+            --loading-bg: rgba(0,0,0,0.5);
+        }
+        body.dark {
+            --bg-body: #1a1e2a;
+            --bg-card: #2a2f3f;
+            --text-primary: #eef2ff;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-light: #334155;
+            --header-bg: #2a2f3f;
+            --header-border: #334155;
+            --badge-bg: #1e293b;
+            --badge-color: #6ee7b7;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.2);
+            --card-border: #334155;
+            --detail-bg: #2a2f3f;
+            --contact-bg: #1e293b;
+            --footer-color: #6c7a91;
+            --divider: #334155;
+            --loading-bg: rgba(0,0,0,0.7);
+        }
         * {
             margin: 0;
             padding: 0;
@@ -14,30 +53,149 @@
         }
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f2f6fa;
+            background: var(--bg-body);
+            color: var(--text-primary);
             padding: 16px;
             min-height: 100vh;
+            transition: background 0.2s ease, color 0.2s ease;
         }
         .wrapper {
             max-width: 780px;
             margin: 0 auto;
         }
+        /* Top bar with tools */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .icon-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 14px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+            color: var(--text-primary);
+        }
+        .icon-btn:hover {
+            background: var(--badge-bg);
+        }
+        .theme-toggle, .toc-toggle, .share-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        /* Loading spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--loading-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.1s, opacity 0.2s;
+        }
+        .loading-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #2c7a5c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Table of contents modal */
+        .toc-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .toc-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .toc-content {
+            background: var(--bg-card);
+            width: 80%;
+            max-width: 400px;
+            border-radius: 32px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .toc-content h4 {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .toc-list li {
+            margin: 12px 0;
+        }
+        .toc-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 24px;
+            background: var(--badge-bg);
+            transition: background 0.2s;
+        }
+        .toc-list a:hover {
+            background: var(--border-light);
+        }
+        /* Card list */
         .card-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
         .card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 28px;
             padding: 20px 22px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05);
-            border: 1px solid #e2edf2;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--card-border);
             transition: all 0.2s ease;
             cursor: pointer;
         }
         .card:active {
-            background: #fafcff;
+            background: var(--badge-bg);
             transform: scale(0.99);
         }
         .card:focus-visible {
@@ -50,26 +208,35 @@
             margin-bottom: 8px;
             color: #1a5d46;
         }
+        body.dark .card h3 {
+            color: #6ee7b7;
+        }
         .card p {
-            color: #2c5370;
+            color: var(--text-secondary);
             font-size: 0.92rem;
             line-height: 1.4;
             margin-bottom: 10px;
         }
         .badge {
             display: inline-block;
-            background: #eaf2f9;
-            color: #1e6b49;
+            background: var(--badge-bg);
+            color: var(--badge-color);
             border-radius: 30px;
             padding: 5px 14px;
             font-size: 0.7rem;
             font-weight: 500;
         }
+        /* Detail view styles */
         .detail-view {
-            background: white;
+            background: var(--detail-bg);
             border-radius: 32px;
             padding: 28px 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .detail-title {
             font-size: 1.8rem;
@@ -79,17 +246,20 @@
             padding-left: 18px;
             margin-bottom: 12px;
         }
+        body.dark .detail-title {
+            color: #6ee7b7;
+        }
         .detail-meta {
-            color: #5c7e97;
+            color: var(--text-muted);
             font-size: 0.8rem;
-            border-bottom: 1px solid #e6edf4;
+            border-bottom: 1px solid var(--divider);
             padding-bottom: 12px;
             margin-bottom: 24px;
         }
         .detail-text {
             font-size: 1rem;
             line-height: 1.6;
-            color: #1f2f3e;
+            color: var(--text-primary);
         }
         .detail-text p {
             margin-bottom: 1rem;
@@ -102,14 +272,17 @@
         }
         .contact-link {
             display: inline-block;
-            background: #eef2f9;
+            background: var(--contact-bg);
             padding: 8px 18px;
             border-radius: 40px;
             text-decoration: none;
             color: #1e6b4e;
             font-weight: 500;
             margin: 6px 6px 0 0;
-            border: 1px solid #cfe0ec;
+            border: 1px solid var(--border-light);
+        }
+        body.dark .contact-link {
+            color: #6ee7b7;
         }
         .back-btn {
             background: #2c7a5c;
@@ -131,42 +304,65 @@
             outline: 2px solid #2c7a5c;
             outline-offset: 2px;
         }
+        /* Floating back to top / home button */
+        .floating-home {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c7a5c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .floating-home:hover {
+            background: #1f6046;
+        }
         .hidden {
             display: none;
         }
         .header {
             text-align: center;
             margin-bottom: 28px;
-            background: white;
+            background: var(--header-bg);
             border-radius: 32px;
             padding: 20px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            border: 1px solid #eef3f8;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--header-border);
         }
         .header h1 {
             font-size: 2rem;
             font-weight: 700;
-            color: #1f6e43;
             background: linear-gradient(145deg, #1f6e43, #0f6b8c);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
         }
         .header p {
-            color: #5f7f98;
+            color: var(--text-muted);
             margin-top: 6px;
         }
         footer {
             text-align: center;
             font-size: 0.7rem;
-            color: #87a1bb;
+            color: var(--footer-color);
             margin-top: 32px;
             padding-top: 12px;
         }
-        .task-image {
+        .task-image-thumb {
             width: 100%;
             border-radius: 12px;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .lightbox {
             display: none;
@@ -176,7 +372,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.85);
-            z-index: 1000;
+            z-index: 2000;
             justify-content: center;
             align-items: center;
             cursor: pointer;
@@ -187,6 +383,9 @@
             border-radius: 16px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
+        .view-transition {
+            transition: opacity 0.2s ease;
+        }
         @media (max-width: 550px) {
             body {
                 padding: 12px;
@@ -194,20 +393,31 @@
             .detail-title {
                 font-size: 1.5rem;
             }
+            .floating-home {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
 <div class="wrapper">
+    <div class="top-bar">
+        <button id="themeToggle" class="icon-btn" aria-label="Switch theme">🌙 Dark</button>
+        <button id="tocToggleBtn" class="icon-btn" aria-label="Table of contents">📑 Contents</button>
+        <button id="shareBtn" class="icon-btn" aria-label="Share this page">📤 Share</button>
+    </div>
+
     <div id="homeContainer">
         <div class="header">
             <h1>💰 PG Earn – Daily Commission</h1>
             <p>Complete orders for brands · Earn every day</p>
         </div>
-        <div style="text-align: center; margin: 8px 0 16px 0; color: #5c7e97; font-size: 0.85rem;">
+        <div style="text-align: center; margin: 8px 0 16px 0; color: var(--text-muted); font-size: 0.85rem;">
             👇 Tap any card to read full guide
         </div>
         <div id="cardsArea" class="card-list"></div>
+        <footer>✅ Use "Back to Contents" or floating button to return</footer>
     </div>
 
     <div id="detailContainer" class="hidden">
@@ -218,8 +428,25 @@
         <footer>✅ Use "Back to Contents" to explore other topics</footer>
     </div>
 
-    <div style="text-align: center; font-size: 0.7rem; color: #87a1bb; margin-top: 20px; padding: 12px 0 8px; border-top: 1px solid #e2edf2;">
+    <div style="text-align: center; font-size: 0.7rem; color: var(--footer-color); margin-top: 20px; padding: 12px 0 8px; border-top: 1px solid var(--divider);">
         This is a personal help site. All rules are subject to the manager’s reply.
+    </div>
+</div>
+
+<!-- Floating home button (only visible in detail view maybe) -->
+<button id="floatingHomeBtn" class="floating-home hidden">🏠 Back to Contents</button>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+</div>
+
+<!-- Table of contents modal -->
+<div id="tocModal" class="toc-modal">
+    <div class="toc-content">
+        <h4>📖 Table of Contents</h4>
+        <ul id="tocList" class="toc-list"></ul>
+        <button id="closeTocBtn" style="margin-top: 16px; width:100%; padding:8px; border-radius:40px; border:1px solid var(--border-light); background:var(--bg-card); cursor:pointer;">Close</button>
     </div>
 </div>
 
@@ -228,6 +455,21 @@
 </div>
 
 <script>
+    // ---------- Global error capture and performance ----------
+    window.onerror = function(msg, url, line, col, error) {
+        console.warn("[Global error]", msg, url, line, col, error);
+        // Optional: silently log, no user alert
+        return false;
+    };
+    window.addEventListener('unhandledrejection', function(e) {
+        console.warn("[Unhandled rejection]", e.reason);
+    });
+    // Performance mark
+    if (performance && performance.mark) {
+        performance.mark("page_loaded");
+    }
+
+    // ---------- Lightbox ----------
     function openLightbox(imgElement) {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -238,6 +480,68 @@
         document.getElementById('lightbox').style.display = 'none';
     }
 
+    // ---------- Theme + system preference ----------
+    function initTheme() {
+        const stored = localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (stored === null && systemDark)) {
+            document.body.classList.add('dark');
+            document.getElementById('themeToggle').innerHTML = '☀️ Light';
+        } else {
+            document.body.classList.remove('dark');
+            document.getElementById('themeToggle').innerHTML = '🌙 Dark';
+        }
+    }
+    function toggleTheme() {
+        if (document.body.classList.contains('dark')) {
+            document.body.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            document.getElementById('themeToggle').innerHTML = '🌙 Dark';
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            document.getElementById('themeToggle').innerHTML = '☀️ Light';
+        }
+    }
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    initTheme();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            if (e.matches) document.body.classList.add('dark');
+            else document.body.classList.remove('dark');
+        }
+    });
+
+    // ---------- Share API ----------
+    document.getElementById('shareBtn').addEventListener('click', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: document.title,
+                text: 'PG Earn – Daily Commission. Complete orders and earn daily.',
+                url: window.location.href
+            }).catch(err => console.log('Share cancelled', err));
+        } else {
+            alert('Your browser does not support native sharing. You can copy the URL: ' + window.location.href);
+        }
+    });
+
+    // ---------- Loading and animations ----------
+    let isLoading = false;
+    let debounceTimer = null;
+    function showLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.add('active');
+    }
+    function hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.remove('active');
+    }
+
+    // ---------- Focus & scroll management ----------
+    let savedScrollY = 0;
+    let lastClickedCard = null;
+
+    // ---------- Data (same as before, task-steps with lazy load images) ----------
     const ARTICLES = {
         "deposit-earnings": {
             title: "💰 Deposit & Earnings",
@@ -281,7 +585,7 @@
             content: `
 <ol>
     <li>Contact your manager to get the current account details.</li>
-    <li>Transfer the required deposit (keep a screenshot of the Ref No).</li>
+    <li>Transfer the required deposit (keep a screenshot of the Ref ID).</li>
     <li>Send the screenshot to your manager. Once confirmed, the funds will be credited to your PG account.</li>
     <li>The platform supports transfers via <strong>BSP, Kina, USDT, and other local banks</strong>.</li>
 </ol>
@@ -327,9 +631,9 @@
 </p>`
         },
         "task-steps": {
-    title: "📝 Task Steps (How to Submit an Order)",
-    meta: "Step-by-step guide for interns & level 1-3",
-    content: `
+            title: "📝 Task Steps (How to Submit an Order)",
+            meta: "Step-by-step guide for interns & level 1-3",
+            content: `
 <p><strong>📍 1. Add your shipping address (one time only)</strong><br>
 Go to <strong>User Center</strong> (bottom right) → scroll down to find "Shipping Address" → enter your address once.</p>
 
@@ -341,12 +645,12 @@ After selecting <strong>"Select All"</strong>, click <strong>"Checkout"</strong>
 
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start; margin: 20px 0;">
     <div style="text-align: center; width: 160px;">
-        <img src="images/address.jpg" alt="Shipping address" style="width: 100%; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onclick="openLightbox(this)">
+        <img src="images/address.jpg" alt="Shipping address" style="width: 100%; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onclick="openLightbox(this)" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\' viewBox=\\'0 0 100 100\\'%3E%3Crect fill=\\'%23ccc\\' width=\\'100\\' height=\\'100\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' fill=\\'%23666\\' font-size=\\'12\\'%3EImage not found%3C/text%3E%3C/svg%3E';">
         <div style="font-size: 0.7rem; color: #5c7e97; margin-top: 6px;">📍 Shipping address</div>
     </div>
     <div style="width: 100%; margin-top: 8px;">
         <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; text-align: center;">
-            <img src="images/checkout.png" alt="Full order process" style="max-width: none; height: auto; width: auto; min-width: 200px; max-height: 300px; border-radius: 12px; cursor: pointer;" onclick="openLightbox(this)">
+            <img src="images/checkout.png" alt="Full order process" style="max-width: none; height: auto; width: auto; min-width: 200px; max-height: 300px; border-radius: 12px; cursor: pointer;" onclick="openLightbox(this)" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'100\\' viewBox=\\'0 0 200 100\\'%3E%3Crect fill=\\'%23ccc\\' width=\\'200\\' height=\\'100\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' fill=\\'%23666\\' font-size=\\'12\\'%3EFull process image missing%3C/text%3E%3C/svg%3E';">
         </div>
         <div style="font-size: 0.7rem; color: #5c7e97; margin-top: 6px; text-align: center;">📋 Swipe right to see full task flow →</div>
     </div>
@@ -356,8 +660,7 @@ After selecting <strong>"Select All"</strong>, click <strong>"Checkout"</strong>
 <p><em>This order is intended to help brands improve their product sales data. No physical product will be shipped to you.</em></p>
 <p style="margin-top: 20px; text-align: center;">
     <a href="#" onclick="showDetail('contact-manager'); return false;" style="display: inline-block; background: #eef2f9; padding: 10px 20px; border-radius: 40px; text-decoration: none; color: #1e6b4e; font-weight: 500;">📞 Need help? Contact Manager →</a>
-</p>
-`
+</p>`
         },
         "contact-manager": {
             title: "📞 Contact Manager",
@@ -427,7 +730,22 @@ After selecting <strong>"Select All"</strong>, click <strong>"Checkout"</strong>
     const cardsArea = document.getElementById('cardsArea');
     const detailContentDiv = document.getElementById('detailContent');
     const backBtn = document.getElementById('backHomeBtn');
+    const floatingHomeBtn = document.getElementById('floatingHomeBtn');
+    const tocModal = document.getElementById('tocModal');
+    const tocToggleBtn = document.getElementById('tocToggleBtn');
+    const closeTocBtn = document.getElementById('closeTocBtn');
+    const tocList = document.getElementById('tocList');
 
+    // Floating button visibility toggle
+    function updateFloatingButton() {
+        if (!detailContainer.classList.contains('hidden')) {
+            floatingHomeBtn.classList.remove('hidden');
+        } else {
+            floatingHomeBtn.classList.add('hidden');
+        }
+    }
+
+    // Render cards
     function renderCards() {
         if (!cardsArea) return;
         cardsArea.innerHTML = '';
@@ -437,51 +755,128 @@ After selecting <strong>"Select All"</strong>, click <strong>"Checkout"</strong>
             const card = document.createElement('div');
             card.className = 'card';
             card.setAttribute('data-id', item.id);
+            card.setAttribute('data-title', item.title);
             card.innerHTML = `<h3>${item.title}</h3><p>${shortDesc}</p><div class="badge">📖 Read more →</div>`;
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showDetail(item.id);
+                handleCardClick(item.id, card);
             });
             cardsArea.appendChild(card);
         });
+        // Build TOC list
+        tocList.innerHTML = '';
+        CARD_LIST.forEach(item => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = item.title;
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Close modal
+                tocModal.classList.remove('active');
+                // Find card and scroll into view
+                const targetCard = Array.from(document.querySelectorAll('.card')).find(card => card.getAttribute('data-id') === item.id);
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.style.transition = 'background 0.3s';
+                    targetCard.style.backgroundColor = 'var(--badge-bg)';
+                    setTimeout(() => {
+                        targetCard.style.backgroundColor = '';
+                    }, 800);
+                }
+            });
+            li.appendChild(a);
+            tocList.appendChild(li);
+        });
+    }
+
+    // Debounced card click with loading
+    let allowClick = true;
+    function handleCardClick(cardId, cardElement) {
+        if (!allowClick) return;
+        allowClick = false;
+        setTimeout(() => { allowClick = true; }, 800);
+        showLoading();
+        lastClickedCard = cardElement;
+        // Simulate tiny delay for loading feedback
+        setTimeout(() => {
+            showDetail(cardId);
+            hideLoading();
+        }, 50);
     }
 
     function showDetail(articleId) {
+        savedScrollY = window.scrollY;
         const article = ARTICLES[articleId];
         if (!article) return;
         const detailHtml = `<div><div class="detail-title">${article.title}</div><div class="detail-meta">📌 ${article.meta}</div><div class="detail-text">${article.content}</div></div>`;
         detailContentDiv.innerHTML = detailHtml;
-        homeContainer.classList.add('hidden');
-        detailContainer.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        if (history.pushState) {
-            history.pushState({ view: 'detail', id: articleId }, '', `#${articleId}`);
-        }
+        // Transition: fade out home, fade in detail
+        homeContainer.style.opacity = '0';
+        setTimeout(() => {
+            homeContainer.classList.add('hidden');
+            detailContainer.classList.remove('hidden');
+            homeContainer.style.opacity = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateFloatingButton();
+            if (history.pushState) {
+                history.pushState({ view: 'detail', id: articleId }, '', `#${articleId}`);
+            }
+        }, 150);
     }
 
     function backToHome() {
-        detailContainer.classList.add('hidden');
-        homeContainer.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        if (location.hash) history.replaceState(null, '', ' ');
+        // Fade out detail
+        detailContainer.style.opacity = '0';
+        setTimeout(() => {
+            detailContainer.classList.add('hidden');
+            homeContainer.classList.remove('hidden');
+            detailContainer.style.opacity = '';
+            window.scrollTo({ top: savedScrollY, behavior: 'auto' });
+            updateFloatingButton();
+            // Restore focus to last clicked card if exists
+            if (lastClickedCard) {
+                lastClickedCard.focus();
+            }
+            if (location.hash) history.replaceState(null, '', ' ');
+        }, 150);
     }
 
     function handlePopState() {
-        if (!detailContainer.classList.contains('hidden')) backToHome();
-        else if (location.hash && location.hash.length > 1) {
+        if (!detailContainer.classList.contains('hidden')) {
+            backToHome();
+        } else if (location.hash && location.hash.length > 1) {
             const id = location.hash.slice(1);
             if (ARTICLES[id]) showDetail(id);
         }
     }
 
+    // TOC modal
+    tocToggleBtn.addEventListener('click', () => {
+        tocModal.classList.add('active');
+    });
+    closeTocBtn.addEventListener('click', () => {
+        tocModal.classList.remove('active');
+    });
+    tocModal.addEventListener('click', (e) => {
+        if (e.target === tocModal) tocModal.classList.remove('active');
+    });
+
+    // Floating button and regular back btn
+    floatingHomeBtn.addEventListener('click', backToHome);
+    backBtn.addEventListener('click', backToHome);
+
+    window.addEventListener('popstate', handlePopState);
+
     function init() {
         renderCards();
-        backBtn.addEventListener('click', backToHome);
-        window.addEventListener('popstate', handlePopState);
+        updateFloatingButton();
         if (location.hash && location.hash.length > 1) {
             const id = location.hash.substring(1);
             if (ARTICLES[id]) showDetail(id);
         }
+        // Initial fade in for home
+        homeContainer.style.opacity = '';
     }
     init();
 </script>
