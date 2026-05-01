@@ -535,19 +535,31 @@
 <script>
     (function() {
         // ---------- Performance detection and style upgrade ----------
-        function supportsBackdropFilter() {
-            // Detect hardware acceleration and backdrop-filter support
-            const el = document.createElement('div');
-            if (!('backdropFilter' in el.style) && !('webkitBackdropFilter' in el.style)) return false;
-            // Additionally, check if GPU is enabled via canvas
-            const canvas = document.createElement('canvas');
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (!gl) return false; // no WebGL -> software rendering likely
-            const renderer = gl.getParameter(gl.RENDERER);
-            // if renderer indicates software (e.g. "SwiftShader", "llvmpipe", "Software") treat as unsupported
-            if (/swiftshader|llvmpipe|software/i.test(renderer)) return false;
-            return true;
-        }
+function supportsBackdropFilter() {
+    const el = document.createElement('div');
+    if (!('backdropFilter' in el.style) && !('webkitBackdropFilter' in el.style)) return false;
+    
+    const canvas = document.createElement('canvas');
+    let gl = null;
+    try {
+        gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    } catch(e) { return false; }
+    if (!gl) return false;
+    
+    const renderer = gl.getParameter(gl.RENDERER);
+    const softwareKeywords = [
+        'swiftshader', 'llvmpipe', 'software', 
+        'microsoft basic render', 'direct3d11', 'angle (microsoft'
+    ];
+    const lowerRenderer = renderer.toLowerCase();
+    const isSoftware = softwareKeywords.some(keyword => lowerRenderer.includes(keyword));
+    if (isSoftware) return false;
+    
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('vmware') || ua.includes('virtualbox')) return false;
+    
+    return true;
+}
         if (supportsBackdropFilter()) {
             const style = document.createElement('style');
             style.textContent = `
