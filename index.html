@@ -135,17 +135,20 @@
             gap: 16px;
         }
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 28px;
-            padding: 18px;
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-            cursor: pointer;
-        }
-        .card:active {
-            transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.08);
-        }
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    border-radius: 28px;
+    padding: 18px;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+.card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(110, 231, 183, 0.5);
+    box-shadow: var(--shadow-hover);
+}
         .card-header {
             display: flex;
             justify-content: space-between;
