@@ -608,6 +608,7 @@
         function openLightbox(imgElement) { lightboxImg.src = imgElement.src; resetZoomAndPan(); lightbox.style.display = 'flex'; lightboxActive = true; document.body.classList.add('lightbox-open'); lightboxImg.onload = () => clampTranslate(); if (lightboxImg.complete) clampTranslate(); }
         function closeLightbox() { lightbox.style.display = 'none'; lightboxActive = false; resetZoomAndPan(); isDragging = false; lightbox.classList.remove('dragging'); document.body.classList.remove('lightbox-open'); }
         window.openLightbox = openLightbox;
+        window.showDetail = showDetail;
         lightboxImg.addEventListener('dblclick', (e) => { e.stopPropagation(); resetZoomAndPan(); clampTranslate(); });
         function startDrag(e) { if (currentZoom <= 1) return; e.preventDefault(); isDragging = true; lightbox.classList.add('dragging'); const clientX = e.clientX ?? (e.touches ? e.touches[0].clientX : 0), clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0); startX = clientX - imgTranslateX; startY = clientY - imgTranslateY; }
         function onDrag(e) { if (!isDragging) return; e.preventDefault(); const clientX = e.clientX ?? (e.touches ? e.touches[0].clientX : 0), clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0); imgTranslateX = clientX - startX; imgTranslateY = clientY - startY; applyTransform(); clampTranslate(); }
